@@ -35,19 +35,22 @@ export default function Register({ recaptchaSiteKey }) {
         };
 
         // Check if reCAPTCHA is already loaded
+        let interval = null;
         if (window.grecaptcha) {
             loadRecaptcha();
         } else {
             // Wait for reCAPTCHA to load
-            const interval = setInterval(() => {
+            interval = setInterval(() => {
                 if (window.grecaptcha) {
                     loadRecaptcha();
-                    clearInterval(interval);
+                    if (interval) clearInterval(interval);
                 }
             }, 100);
         }
 
-        return () => clearInterval(interval);
+        return () => {
+            if (interval) clearInterval(interval);
+        };
     }, [recaptchaSiteKey]);
 
     const submit = (e) => {
